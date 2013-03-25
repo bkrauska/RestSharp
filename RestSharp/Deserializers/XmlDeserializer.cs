@@ -250,8 +250,19 @@ namespace RestSharp.Deserializers
 			var list = (IList)Activator.CreateInstance(type);
 
 			var elements = root.Descendants(t.Name.AsNamespaced(Namespace));
-			
-			var name = t.Name;
+
+            var name = t.Name;
+
+            if (!elements.Any())
+            {
+                var xmlAttribute = (System.Xml.Serialization.XmlTypeAttribute)Attribute.GetCustomAttribute(t, typeof(System.Xml.Serialization.XmlTypeAttribute));
+
+                if (xmlAttribute != null)
+                {
+                    var elementName = xmlAttribute.TypeName;
+                    elements = root.Descendants(elementName);
+                }
+            }
 
 			if (!elements.Any())
 			{
